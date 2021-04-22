@@ -1,5 +1,6 @@
 package com.android.dogbreedscanner.remote.helper
 
+import com.android.dogbreedscanner.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 

@@ -25,6 +25,7 @@ android {
                 buildConfigField "String", "API_KEY", thedogapi_key
             } catch (e) {
                 // add gradle.properties file with the following property:
+                // thedogapibase_url = "API_BASE_URL"
                 // thedogapi_key = "YOUR_API_KEY"
                 throw e
             }
@@ -36,6 +37,7 @@ android {
                 buildConfigField "String", "API_KEY", thedogapi_key
             }catch (e) {
                 // add gradle.properties file with the following property:
+                // thedogapibase_url = "API_BASE_URL"
                 // thedogapi_key = "YOUR_API_KEY"
                 throw e
             }

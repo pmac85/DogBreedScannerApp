@@ -1,5 +1,6 @@
 package com.android.dogbreedscanner.remote.helper
 
+import com.android.dogbreedscanner.BuildConfig
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
