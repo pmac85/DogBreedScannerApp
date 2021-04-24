@@ -50,13 +50,13 @@ class BreedsRepository(
         this.bredFor,
         this.breedGroup,
         this.countryCode,
-        this.height.let { Measure(it.imperial, it.metric) },
+        this.height?.let { Measure(it.imperial, it.metric) },
         this.breedId,
         this.image?.let { Image(it.height, it.imageId, it.url, it.width) },
         this.lifeSpan,
         this.name,
         this.referenceImageId,
         this.temperament,
-        this.weight.let { Measure(it.imperial, it.metric) }
+        this.weight?.let { Measure(it.imperial, it.metric) }
     )
 }

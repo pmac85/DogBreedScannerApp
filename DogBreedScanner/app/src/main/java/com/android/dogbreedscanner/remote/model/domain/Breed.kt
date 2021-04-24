@@ -9,12 +9,12 @@ data class Breed(
     val bredFor: String?,
     val breedGroup: String?,
     val countryCode: String?,
-    val height: Measure,
+    val height: Measure?,
     val breedId: Int,
     val image: Image?,
-    val lifeSpan: String,
-    val name: String,
-    val referenceImageId: String,
-    val temperament: String,
-    val weight: Measure
+    val lifeSpan: String?,
+    val name: String?,
+    val referenceImageId: String?,
+    val temperament: String?,
+    val weight: Measure?
 )

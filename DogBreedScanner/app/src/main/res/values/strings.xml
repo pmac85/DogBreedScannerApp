@@ -3,4 +3,11 @@
     <string name="title_breeds">Breeds</string>
     <string name="title_search">Search</string>
     <string name="title_breedDetails">Breed Details</string>
+    <string name="menu_reorder">Reorder</string>
+    <string name="menu_change_view">Change view</string>
+    <string name="breed_category">Breed Group:</string>
+    <string name="breed_name">Breed Name:</string>
+    <string name="origin">Origin:</string>
+    <string name="temperament">Temperament:</string>
+    <string name="life_span">Life Span:</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.android.dogbreedscanner.ui.breedDetails
 
-import com.android.dogbreedscanner.remote.model.domain.Measure
 import java.io.Serializable
 
 /**
@@ -9,13 +8,10 @@ import java.io.Serializable
  * </prev>
  */
 data class BreedDetailsData(
-    val bredFor: String?,
+    val name: String,
     val breedGroup: String?,
     val countryCode: String?,
-    val height: Measure,
-    val imageUrl: String?,
-    val lifeSpan: String,
-    val name: String,
-    val temperament: String,
-    val weight: Measure
+    val temperament: String?,
+    val url: String?,
+    val lifeSpan: String?
 ) : Serializable

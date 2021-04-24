@@ -4,37 +4,55 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.android.dogbreedscanner.R
+import com.android.dogbreedscanner.databinding.FragmentBreedDetailsBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 
 class BreedDetailsFragment : Fragment() {
 
-    private lateinit var breedDetailsViewModel: BreedDetailsViewModel
-
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(BreedDetailsViewModel::class.java)
+    }
     private val args: BreedDetailsFragmentArgs by navArgs()
+
+    private var _binding: FragmentBreedDetailsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        breedDetailsViewModel =
-            ViewModelProvider(this).get(BreedDetailsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_breed_details, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-        breedDetailsViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+    ): View {
 
-        val detailsTextView: TextView = root.findViewById(R.id.text_details)
-        detailsTextView.text = args.breedDetails?.toString()
+        _binding = FragmentBreedDetailsBinding.inflate(inflater, container, false)
 
+        val detailData = args.breedDetails
 
+        detailData?.let {
+            binding.apply {
+                detail = it
 
-        return root
+                val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+
+                Glide.with(itemImage.context)
+                    .load(it.url)
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
+                    .apply(RequestOptions().centerCrop().placeholder(R.drawable.image_large))
+                    .into(itemImage)
+            }
+        }
+
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
