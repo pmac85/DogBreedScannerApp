@@ -45,7 +45,6 @@ class BreedsFragment : Fragment() {
 
         _binding = FragmentBreedsBinding.inflate(inflater, container, false)
 
-
         setupInitialObservers()
         setupUpdateObserver()
         setupResumeUiObserver()
@@ -92,7 +91,7 @@ class BreedsFragment : Fragment() {
     }
 
     private fun setupInitialObservers() {
-        viewModel.initialListBreedListOutput.observe(viewLifecycleOwner, { response ->
+        viewModel.initialListBreedOutput.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is ViewModelOutputUIModel.Content -> {
                     setupInitialUi(response.contentData)
@@ -116,7 +115,7 @@ class BreedsFragment : Fragment() {
     }
 
     private fun setupUpdateObserver() {
-        viewModel.updateListBreedListOutput.observe(viewLifecycleOwner, { response ->
+        viewModel.updateListBreedOutput.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is ViewModelOutputUIModel.Content -> {
                     gridAdapter?.addMoreItems(response.contentData)
@@ -221,7 +220,6 @@ class BreedsFragment : Fragment() {
     }
 
     private fun createListViewAdapter(items: HashMap<String, BreedsViewModel.BreedListUiData>) {
-
         listAdapter = BreedListViewItemAdapter(hashMapOf()) { id, position ->
             val action = BreedsFragmentDirections.actionNavigationBreedsToBreedDetailsFragment(
                 viewModel.getDetails(id, position)
@@ -231,9 +229,9 @@ class BreedsFragment : Fragment() {
 
         binding.apply {
             progressBar.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
 
             recyclerView.apply {
+                visibility = View.GONE
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
@@ -249,14 +247,19 @@ class BreedsFragment : Fragment() {
                     }
                 }
 
-                addItemDecoration(VerticalItemDividerDecorator(20, true))
+                addItemDecoration(
+                    VerticalItemDividerDecorator(
+                        resources.getDimensionPixelSize(R.dimen.adapter_divider),
+                        true
+                    )
+                )
 
                 adapter = listAdapter!!
 
                 addOnScrollListener(paginationScrollListener)
 
                 progressBar.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
+                visibility = View.VISIBLE
             }
 
             gridAdapter = null
@@ -309,6 +312,4 @@ class BreedsFragment : Fragment() {
         GridView,
         ListView
     }
-
-
 }

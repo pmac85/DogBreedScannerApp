@@ -8,4 +8,6 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="adapterBackgroundColor">#F0F0F0</color>
+    <color name="listSearchHintColorSearchBackgroundColor">@color/purple_700</color>
+    <color name="hintColor">#58718A</color>
 </resources>

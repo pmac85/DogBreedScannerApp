@@ -16,11 +16,11 @@ class BreedsViewModel(private val breedsRepository: BreedsRepository) : ViewMode
 
     private val _initialListBreedOutput =
         SingleLiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>>()
-    val initialListBreedListOutput: LiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>> =
+    val initialListBreedOutput: LiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>> =
         _initialListBreedOutput
     private val _updateListBreedOutput =
         SingleLiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>>()
-    val updateListBreedListOutput: LiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>> =
+    val updateListBreedOutput: LiveData<ViewModelOutputUIModel<HashMap<String, BreedListUiData>, String, String>> =
         _updateListBreedOutput
     private val _resumeUiOutput =
         SingleLiveData<ViewModelOutputUIModel<Pair<HashMap<String, BreedListUiData>, Int>, Nothing, Nothing>>()
@@ -69,8 +69,6 @@ class BreedsViewModel(private val breedsRepository: BreedsRepository) : ViewMode
             )
         }
     }
-
-    fun getCurrentFullAdapterMap() = fullUiDataMap
 
     private fun getBreedList(isStart: Boolean) {
         viewModelScope.launch {
@@ -129,13 +127,7 @@ class BreedsViewModel(private val breedsRepository: BreedsRepository) : ViewMode
         val id: Int
     )
 
-    enum class ListOrderType {
-        None,
-        Ascending,
-        Descending
-    }
-
     companion object {
-        const val BREEDS_PER_PAGE = 20
+        private const val BREEDS_PER_PAGE = 20
     }
 }
