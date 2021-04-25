@@ -4,8 +4,11 @@ import com.android.dogbreedscanner.remote.api.BreedsApi
 import com.android.dogbreedscanner.remote.helper.ResponseHandler
 import com.android.dogbreedscanner.remote.helper.ServiceResponse
 import com.android.dogbreedscanner.remote.model.domain.Breed
+import com.android.dogbreedscanner.remote.model.domain.ImageItem
 import com.android.dogbreedscanner.remote.model.dto.BreedDTO
+import com.android.dogbreedscanner.remote.model.dto.ImageItemDTO
 import com.android.dogbreedscanner.remote.model.input.GetBreedsInput
+import com.android.dogbreedscanner.remote.model.input.GetImageByBreedId
 import com.android.dogbreedscanner.remote.model.input.SearchByBreedInput
 import com.android.dogbreedscanner.remote.repository.BreedsRepository
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -142,11 +145,58 @@ class BreedsRepositoryTest {
             null
         )
     )
+    private val imageItemDTO = arrayListOf(
+        ImageItemDTO(
+            560,
+            "21334",
+            "url",
+            780,
+            arrayListOf(
+                BreedDTO(
+                    "breedFor",
+                    "breedGroup",
+                    "countryCode",
+                    null,
+                    2,
+                    null,
+                    "lifeSpan",
+                    "Border Terrier",
+                    null,
+                    null,
+                    null
+                )
+            )
+        )
+    )
+    private val imageItemOutput = arrayListOf(
+        ImageItem(
+            560,
+            "21334",
+            "url",
+            780,
+            arrayListOf(
+                Breed(
+                    "breedFor",
+                    "breedGroup",
+                    "countryCode",
+                    null,
+                    2,
+                    null,
+                    "lifeSpan",
+                    "Border Terrier",
+                    null,
+                    null,
+                    null
+                )
+            )
+        )
+    )
 
     private val errorResponse = ServiceResponse.Error("Unauthorised")
     private val invalidPage = "5555"
     private val invalidTag = "Invalid tag"
     private val searchName = "bor"
+    private val breedId = "1"
 
     @Before
     fun setUp() {
@@ -167,6 +217,8 @@ class BreedsRepositoryTest {
             )
             whenever(breedsApi.searchByBreed(eq(searchName))).thenReturn(searchByNameDTO)
             whenever(breedsApi.searchByBreed(eq(invalidTag))).thenThrow(mockException)
+            whenever(breedsApi.getImageByBreedId(eq(breedId))).thenReturn(imageItemDTO)
+            whenever(breedsApi.getImageByBreedId(eq(invalidTag))).thenThrow(mockException)
         }
 
         breedsRepository = BreedsRepository(breedsApi, responseHandler)
@@ -209,6 +261,25 @@ class BreedsRepositoryTest {
             assertEquals(
                 errorResponse,
                 breedsRepository.searchByBreed(SearchByBreedInput(invalidTag))
+            )
+        }
+
+    @Test
+    fun `test getImageByBreedId when valid BreedId is requested, then ServiceResponseSuccess with the list of matching list of ImageItem items is returned`() =
+        runBlocking {
+            assertEquals(
+                ServiceResponse.Success(imageItemOutput), breedsRepository.getImageByBreedId(
+                    GetImageByBreedId(breedId)
+                )
+            )
+        }
+
+    @Test
+    fun `test getImageByBreedId when invalid BreedId is requested, then ServiceResponseError with error is returned`() =
+        runBlocking {
+            assertEquals(
+                errorResponse,
+                breedsRepository.getImageByBreedId(GetImageByBreedId(invalidTag))
             )
         }
 
