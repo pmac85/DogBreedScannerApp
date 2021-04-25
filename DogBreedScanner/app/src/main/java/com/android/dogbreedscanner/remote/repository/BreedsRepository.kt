@@ -5,9 +5,12 @@ import com.android.dogbreedscanner.remote.helper.ResponseHandler
 import com.android.dogbreedscanner.remote.helper.ServiceResponse
 import com.android.dogbreedscanner.remote.model.domain.Breed
 import com.android.dogbreedscanner.remote.model.domain.Image
+import com.android.dogbreedscanner.remote.model.domain.ImageItem
 import com.android.dogbreedscanner.remote.model.domain.Measure
 import com.android.dogbreedscanner.remote.model.dto.BreedDTO
+import com.android.dogbreedscanner.remote.model.dto.ImageItemDTO
 import com.android.dogbreedscanner.remote.model.input.GetBreedsInput
+import com.android.dogbreedscanner.remote.model.input.GetImageByBreedId
 import com.android.dogbreedscanner.remote.model.input.SearchByBreedInput
 
 /**
@@ -46,6 +49,18 @@ class BreedsRepository(
         }
     }
 
+    suspend fun getImageByBreedId(getImageByBreedId: GetImageByBreedId): ServiceResponse<List<ImageItem>> {
+        return try {
+            val response = breedsApi.getImageByBreedId(
+                getImageByBreedId.breedId
+            )
+
+            responseHandler.handleSuccess(response.map { it.mapToOutput() })
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
+    }
+
     private fun BreedDTO.mapToOutput(): Breed = Breed(
         this.bredFor,
         this.breedGroup,
@@ -58,5 +73,14 @@ class BreedsRepository(
         this.referenceImageId,
         this.temperament,
         this.weight?.let { Measure(it.imperial, it.metric) }
+    )
+
+    private fun ImageItemDTO.mapToOutput(): ImageItem = ImageItem(
+        this.height,
+        this.imageId,
+        this.url, this.width,
+        this.breeds?.map {
+            it.mapToOutput()
+        }
     )
 }

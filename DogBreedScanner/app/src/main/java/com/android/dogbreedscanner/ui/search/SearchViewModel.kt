@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.dogbreedscanner.remote.helper.ServiceResponse
 import com.android.dogbreedscanner.remote.model.domain.Breed
+import com.android.dogbreedscanner.remote.model.domain.ImageItem
 import com.android.dogbreedscanner.remote.model.input.GetBreedsInput
+import com.android.dogbreedscanner.remote.model.input.GetImageByBreedId
 import com.android.dogbreedscanner.remote.model.input.SearchByBreedInput
 import com.android.dogbreedscanner.remote.repository.BreedsRepository
 import com.android.dogbreedscanner.ui.breedDetails.BreedDetailsData
@@ -27,6 +29,11 @@ class SearchViewModel(private val breedsRepository: BreedsRepository) : ViewMode
         SingleLiveData<ViewModelOutputUIModel<Pair<ArrayList<BreedSearchListUiData>, Int>, Nothing, Nothing>>()
     val resumeUiOutput: LiveData<ViewModelOutputUIModel<Pair<ArrayList<BreedSearchListUiData>, Int>, Nothing, Nothing>> =
         _resumeUiOutput
+    private val _breedDetailUiOutput =
+        SingleLiveData<ViewModelOutputUIModel<BreedDetailsData?, Nothing, Nothing>>()
+    val breedDetailUiOutput: LiveData<ViewModelOutputUIModel<BreedDetailsData?, Nothing, Nothing>> =
+        _breedDetailUiOutput
+
 
     private var mapOfCurrentBreedsById = hashMapOf<Int, Breed>()
     private var currentAdapterPosition = 1
@@ -61,19 +68,10 @@ class SearchViewModel(private val breedsRepository: BreedsRepository) : ViewMode
         }
     }
 
-    fun getDetails(breedId: Int, adapterPosition: Int): BreedDetailsData? {
+    fun getDetails(breedId: Int, adapterPosition: Int) {
         currentAdapterPosition = adapterPosition
 
-        return mapOfCurrentBreedsById[breedId]?.let {
-            BreedDetailsData(
-                it.name!!,
-                it.breedGroup,
-                it.countryCode,
-                it.temperament,
-                it.image?.url,
-                it.lifeSpan
-            )
-        }
+        getImageById(breedId)
     }
 
     private fun getInitialList() {
@@ -92,6 +90,40 @@ class SearchViewModel(private val breedsRepository: BreedsRepository) : ViewMode
                 is ServiceResponse.Success -> parseSuccessResult(response.successData, true)
             }
         }
+    }
+
+    private fun getImageById(breedId: Int) {
+        _breedDetailUiOutput.postValue(ViewModelOutputUIModel.Loading)
+        viewModelScope.launch {
+            when (val response =
+                breedsRepository.getImageByBreedId(GetImageByBreedId(breedId.toString()))) {
+                is ServiceResponse.Error -> _initialListBreedOutput.postValue(
+                    ViewModelOutputUIModel.Error(
+                        response.errorData
+                    )
+                )
+                is ServiceResponse.Success -> processDetailsResult(
+                    breedId,
+                    response.successData.find {
+                        it.breeds?.firstOrNull { breed -> breed.breedId == breedId } != null
+                    })
+            }
+        }
+    }
+
+    private fun processDetailsResult(breedId: Int, imageItem: ImageItem?) {
+        _breedDetailUiOutput.postValue(ViewModelOutputUIModel.Content(
+            mapOfCurrentBreedsById[breedId]?.let {
+                BreedDetailsData(
+                    it.name!!,
+                    it.breedGroup,
+                    it.countryCode,
+                    it.temperament,
+                    imageItem?.url,
+                    it.lifeSpan
+                )
+            }
+        ))
     }
 
     private fun parseSuccessResult(listBreeds: List<Breed>, isStart: Boolean) {

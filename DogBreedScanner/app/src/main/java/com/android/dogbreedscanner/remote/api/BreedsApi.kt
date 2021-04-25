@@ -1,6 +1,7 @@
 package com.android.dogbreedscanner.remote.api
 
 import com.android.dogbreedscanner.remote.model.dto.BreedDTO
+import com.android.dogbreedscanner.remote.model.dto.ImageItemDTO
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -22,6 +23,11 @@ interface BreedsApi {
     suspend fun searchByBreed(
         @Query("q") breedName: String
     ): List<BreedDTO>
+
+    @GET("$API_VERSION/images/search")
+    suspend fun getImageByBreedId(
+        @Query("breed_id") breedId: String
+    ): List<ImageItemDTO>
 
     companion object {
         private const val API_VERSION = "v1"

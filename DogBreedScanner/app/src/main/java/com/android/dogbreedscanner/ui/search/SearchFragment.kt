@@ -39,6 +39,7 @@ class SearchFragment : Fragment() {
         setupInitialObservers()
         setupUpdateObserver()
         setupResumeUiObserver()
+        setupDetailsUiObserver()
 
         return binding.root
     }
@@ -142,12 +143,39 @@ class SearchFragment : Fragment() {
         })
     }
 
+    private fun setupDetailsUiObserver() {
+        viewModel.breedDetailUiOutput.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is ViewModelOutputUIModel.Content -> {
+                    binding.apply {
+                        progressBar.visibility = View.GONE
+                        searchRv.visibility = View.VISIBLE
+                    }
+                    val action =
+                        SearchFragmentDirections.actionNavigationSearchToBreedDetailsFragment(
+                            response.contentData
+                        )
+                    findNavController().navigate(action)
+                }
+                is ViewModelOutputUIModel.Empty -> {
+                    // do nothing
+                }
+                is ViewModelOutputUIModel.Error -> {
+                    // do nothing
+                }
+                ViewModelOutputUIModel.Loading -> {
+                    binding.apply {
+                        progressBar.visibility = View.VISIBLE
+                        searchRv.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+
     private fun createAdapter(items: ArrayList<SearchViewModel.BreedSearchListUiData>) {
         val listAdapter = SearchListItemAdapter(items) { id, position ->
-            val action = SearchFragmentDirections.actionNavigationSearchToBreedDetailsFragment(
-                viewModel.getDetails(id, position)
-            )
-            findNavController().navigate(action)
+            viewModel.getDetails(id, position)
         }
 
         binding.apply {
